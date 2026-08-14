@@ -1,5 +1,6 @@
 "use client";
 
+import FormInput from "@/components/common/form-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,11 +16,10 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { INITIAL_LOGIN_FORM } from "@/constants/auth-constant";
 import { LoginForm, loginSchema } from "@/validations/auth-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { toast } from "sonner"; // bisa buat notif sukses ?
 
@@ -42,48 +42,22 @@ export function Login() {
       <CardContent>
         <form id="form-login" onSubmit={onSubmit} className="space-y-4">
           <FieldGroup>
-            <Controller
+            <FormInput
+              form={form}
               name="email"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-login-email">Email</FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-login-email"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Insert your email"
-                    autoComplete="off"
-                    type="email"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
+              label="Email"
+              placeholder="Insert your email"
+              type="email"
+              autoComplete="email"
+            ></FormInput>
+            <FormInput
+              form={form}
               name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-login-password">
-                    Password
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-login-password"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="*****"
-                    autoComplete="off"
-                    type="password"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+              label="Password"
+              placeholder="*****"
+              type="password"
+              autoComplete="current-password"
+            ></FormInput>
           </FieldGroup>
         </form>
       </CardContent>
