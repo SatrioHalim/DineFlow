@@ -16,22 +16,51 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { INITIAL_LOGIN_FORM } from "@/constants/auth-constant";
-import { LoginForm, loginSchema } from "@/validations/auth-validation";
+import {
+  INITIAL_LOGIN_FORM,
+  INITIAL_STATE_LOGIN_FORM,
+} from "@/constants/auth-constant";
+import { LoginForm, loginSchemaForm } from "@/validations/auth-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import { toast } from "sonner"; // bisa buat notif sukses ?
+import { toast } from "sonner";
+import { login } from "../actions";
+import { Loader2 } from "lucide-react";
 
 export function Login() {
   const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchemaForm),
     defaultValues: INITIAL_LOGIN_FORM,
   });
 
+  const [loginState, loginAction, isPendingLogin] = useActionState(
+    login,
+    INITIAL_STATE_LOGIN_FORM,
+  );
+
   const onSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    startTransition(() => {
+      loginAction(formData);
+    });
   });
+
+  useEffect(() => {
+    if (loginState?.status === "error") {
+      toast.error("Login Failed", {
+        description: loginState.errors?._form?.[0],
+      });
+      startTransition(() => {
+        loginAction(null);
+      });
+    }
+  }, [loginState]);
 
   return (
     <Card className="w-full sm:max-w-md">
@@ -64,7 +93,11 @@ export function Login() {
       <CardFooter>
         <Field orientation="horizontal" className="justify-center">
           <Button type="submit" form="form-login" className={"w-60 mt-5"}>
-            Login
+            {isPendingLogin ? (
+              <Loader2 className="animate-spin"></Loader2>
+            ) : (
+              "Login"
+            )}
           </Button>
         </Field>
       </CardFooter>
