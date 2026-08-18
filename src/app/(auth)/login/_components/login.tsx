@@ -25,7 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import { toast } from "sonner"; // bisa buat notif sukses ?
+import { toast } from "sonner";
 import { login } from "../actions";
 import { Loader2 } from "lucide-react";
 
@@ -53,6 +53,9 @@ export function Login() {
 
   useEffect(() => {
     if (loginState?.status === "error") {
+      toast.error("Login Failed", {
+        description: loginState.errors?._form?.[0],
+      });
       startTransition(() => {
         loginAction(null);
       });
