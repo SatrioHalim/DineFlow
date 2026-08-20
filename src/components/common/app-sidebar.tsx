@@ -27,14 +27,17 @@ export default function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size={"lg"} asChild>
-              <div className="font-semibold flex items-center gap-2">
-                <div className="bg-teal-500 flex p-2 items-center justify-center rounded-md">
-                  <Utensils className="size-4" />
+            <SidebarMenuButton
+              size={"lg"}
+              render={
+                <div className="font-semibold flex items-center gap-2">
+                  <div className="bg-teal-500 flex p-2 items-center justify-center rounded-md">
+                    <Utensils className="size-4" />
+                  </div>
+                  DineFlow
                 </div>
-                DineFlow
-              </div>
-            </SidebarMenuButton>
+              }
+            ></SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

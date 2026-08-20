@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ReactNode } from "react";
+import DashboardBreadCrumb from "./_components/dashboard-breadcrumb";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               orientation="vertical"
               className={"mr-2 data-[orientation=vertical]:h-4"}
             />
+            <DashboardBreadCrumb></DashboardBreadCrumb>
           </div>
           <div className="px-4">
             <DarkModeToggle />
