@@ -97,7 +97,7 @@ export default function UserManagement() {
         currentPage={currentPage}
         currentLimit={currentLimit}
         onChangePage={handleChangePage}
-        onLimitChange={handleChangeLimit}
+        onChangeLimit={handleChangeLimit}
       ></DataTable>
     </div>
   );
