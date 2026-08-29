@@ -10,20 +10,26 @@ import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Edit, Pencil, Trash2 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import DialogCreateUser from "./dialog-create-user";
 
 export default function UserManagement() {
   const supabase = createClient();
+  const [openCreateUserDialog, setOpenCreateUserDialog] = useState(false);
   const {
     currentLimit,
     currentPage,
+    currentSearch,
     handleChangeLimit,
     handleChangePage,
-    currentSearch,
     handleChangeSearch,
   } = useDataTable();
-  const { data: users, isLoading } = useQuery({
+  const {
+    data: users,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["users", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
       const result = await supabase
@@ -92,10 +98,17 @@ export default function UserManagement() {
             placeholder="Search by name"
             onChange={(e) => handleChangeSearch(e.target.value)}
           ></Input>
-          <Dialog>
+          <Dialog
+            open={openCreateUserDialog}
+            onOpenChange={setOpenCreateUserDialog}
+          >
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             ></DialogTrigger>
+            <DialogCreateUser
+              refetch={refetch}
+              onSuccess={() => setOpenCreateUserDialog(false)}
+            ></DialogCreateUser>
           </Dialog>
         </div>
       </div>
