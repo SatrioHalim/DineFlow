@@ -12,6 +12,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import {
   INITIAL_CREATE_USER_FORM,
   INITIAL_STATE_CREATE_USER,
+  ROLE_LIST,
 } from "@/constants/auth-constant";
 import {
   CreateUserForm,
@@ -23,6 +24,7 @@ import { startTransition, useActionState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { createUser } from "../actions";
 import { toast } from "sonner";
+import FormSelect from "@/components/common/form-select";
 
 type DialogCreateUserProps = {
   refetch: () => void;
@@ -106,12 +108,12 @@ export default function DialogCreateUser({
             type="email"
             autoComplete="email"
           ></FormInput>
-          <FormInput
+          <FormSelect
             form={form}
             name="role"
             label="Role"
-            placeholder="Insert user role"
-          ></FormInput>
+            selectItem={ROLE_LIST}
+          ></FormSelect>
           <FormInput
             form={form}
             name="password"
