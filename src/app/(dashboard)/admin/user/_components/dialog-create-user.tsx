@@ -20,11 +20,18 @@ import {
 } from "@/validations/auth-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { startTransition, useActionState, useEffect, useRef } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { createUser } from "../actions";
 import { toast } from "sonner";
 import FormSelect from "@/components/common/form-select";
+import FormImage from "@/components/common/form-image";
 
 type DialogCreateUserProps = {
   refetch: () => void;
@@ -44,10 +51,23 @@ export default function DialogCreateUser({
     useActionState(createUser, INITIAL_STATE_CREATE_USER);
   const lastHandledStatusRef = useRef<string | undefined>(undefined);
 
-  const onSubmit = form.handleSubmit(async (data) => {
+  const [preview, setPreview] = useState<
+    { file: File; displayUrl: string } | undefined
+  >(undefined);
+
+  const onSubmit = form.handleSubmit((data) => {
+    lastHandledStatusRef.current = undefined;
     const formData = new FormData();
+
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (key === "avatar_url") {
+        if (preview?.file) {
+          formData.append(key, preview.file);
+        }
+        return;
+      }
+
+      formData.append(key, String(value ?? ""));
     });
 
     startTransition(() => {
@@ -64,9 +84,6 @@ export default function DialogCreateUser({
         description: createUserState.errors?._form?.[0],
       });
       lastHandledStatusRef.current = "error";
-      startTransition(() => {
-        createUserAction(null);
-      });
     }
     if (
       createUserState?.status === "success" &&
@@ -76,13 +93,8 @@ export default function DialogCreateUser({
       form.reset();
       onSuccess();
       refetch();
+      setPreview(undefined);
       lastHandledStatusRef.current = "success";
-      startTransition(() => {
-        createUserAction(null);
-      });
-    }
-    if (!createUserState?.status) {
-      lastHandledStatusRef.current = undefined;
     }
   }, [createUserState, createUserAction, form, onSuccess, refetch]);
 
@@ -114,6 +126,13 @@ export default function DialogCreateUser({
             label="Role"
             selectItem={ROLE_LIST}
           ></FormSelect>
+          <FormImage
+            form={form}
+            name="avatar_url"
+            label="Avatar"
+            preview={preview}
+            setPreview={setPreview}
+          ></FormImage>
           <FormInput
             form={form}
             name="password"

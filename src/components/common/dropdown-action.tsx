@@ -15,7 +15,6 @@ export default function DropdownAction({
     label: string | ReactNode;
     variant?: "destructive" | "default";
     action?: () => void;
-    type?: "button" | "link";
   }[];
 }) {
   return (
@@ -36,7 +35,6 @@ export default function DropdownAction({
           <DropdownMenuItem
             key={`dropdown-action-${index}`}
             variant={item.variant || "default"}
-            render={item.type === "link"}
             onClick={item.action}
           >
             {item.label}
