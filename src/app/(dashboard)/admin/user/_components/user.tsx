@@ -13,6 +13,8 @@ import { Edit, Pencil, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import DialogCreateUser from "./dialog-create-user";
+import { Profile } from "@/types/auth";
+import DialogUpdateUser from "./dialog-update-user";
 
 export default function UserManagement() {
   const supabase = createClient();
@@ -49,6 +51,15 @@ export default function UserManagement() {
     },
   });
 
+  const [selectedAction, setSelectedAction] = useState<{
+    data: Profile;
+    type: "update" | "delete";
+  } | null>(null);
+
+  const handleChangeAction = (open: boolean) => {
+    if (!open) setSelectedAction(null);
+  };
+
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
       return [
@@ -65,7 +76,12 @@ export default function UserManagement() {
                   Edit
                 </span>
               ),
-              action: () => {},
+              action: () => {
+                setSelectedAction({
+                  data: user,
+                  type: "update",
+                });
+              },
             },
             {
               label: (
@@ -122,6 +138,12 @@ export default function UserManagement() {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       ></DataTable>
+      <DialogUpdateUser
+        open={selectedAction !== null && selectedAction.type === "update"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      ></DialogUpdateUser>
     </div>
   );
 }
