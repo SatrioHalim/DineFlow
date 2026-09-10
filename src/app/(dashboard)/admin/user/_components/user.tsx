@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import DialogCreateUser from "./dialog-create-user";
 import { Profile } from "@/types/auth";
 import DialogUpdateUser from "./dialog-update-user";
+import DialogDeleteUser from "./dialog-delete-user";
 
 export default function UserManagement() {
   const supabase = createClient();
@@ -39,7 +40,7 @@ export default function UserManagement() {
         .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
         .order("created_at")
-        .ilike("name", `%${currentSearch}%`);
+        // .ilike("name", `%${currentSearch}%`);
 
       if (result.error) {
         toast.error("Get User data failed", {
@@ -91,7 +92,12 @@ export default function UserManagement() {
                 </span>
               ),
               variant: "destructive",
-              action: () => {},
+              action: () => {
+                setSelectedAction({
+                  data: user,
+                  type: "delete",
+                });
+              },
             },
           ]}
         ></DropdownAction>,
@@ -144,6 +150,12 @@ export default function UserManagement() {
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
       ></DialogUpdateUser>
+      <DialogDeleteUser
+        open={selectedAction !== null && selectedAction.type === "delete"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      ></DialogDeleteUser>
     </div>
   );
 }

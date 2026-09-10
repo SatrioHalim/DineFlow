@@ -13,6 +13,6 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   profile: INITIAL_STATE_PROFILE,
-  setUser: (user) => set({user}),
-  setProfile: (profile) => set({profile})
+  setUser: (user) => set({ user }),
+  setProfile: (profile) => set({ profile: profile ?? INITIAL_STATE_PROFILE }),
 }));

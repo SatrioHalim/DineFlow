@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadFile } from "@/actions/storage-action";
+import { deleteFile, uploadFile } from "@/actions/storage-action";
 import {
   INITIAL_STATE_CREATE_USER,
   INITIAL_STATE_UPDATE_USER,
@@ -151,6 +151,58 @@ export async function updateUser(
       avatar_url: validateFields.data.avatar_url,
     })
     .eq("id", formData.get("id"));
+
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
+      },
+    };
+  }
+
+  return {
+    status: "success",
+  };
+}
+
+export async function deleteUser(prevState: AuthFormState, formData: FormData) {
+  const supabase = await createClient({ isAdmin: true });
+  const image = (formData.get("avatar_url") as string | null) ?? "";
+  const userId = (formData.get("id") as string | null) ?? "";
+
+  if (!userId) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: ["User id is required"],
+      },
+    };
+  }
+
+  if (image) {
+    const filePath = image.includes("/images/")
+      ? image.split("/images/")[1]
+      : image;
+
+    if (filePath) {
+      const { status, errors } = await deleteFile("images", filePath);
+
+      if (status === "error") {
+        return {
+          status: "error",
+          errors: {
+            ...prevState.errors,
+            _form: [errors?._form?.[0] ?? "Unknown error"],
+          },
+        };
+      }
+    }
+  }
+
+  const { error } = await supabase.auth.admin.deleteUser(userId);
 
   if (error) {
     return {
