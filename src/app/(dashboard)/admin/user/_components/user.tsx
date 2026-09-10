@@ -40,7 +40,7 @@ export default function UserManagement() {
         .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
         .order("created_at")
-        // .ilike("name", `%${currentSearch}%`);
+        .ilike("name", `%${currentSearch}%`);
 
       if (result.error) {
         toast.error("Get User data failed", {
@@ -64,7 +64,7 @@ export default function UserManagement() {
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
       return [
-        index + 1,
+        currentLimit * (currentPage - 1) + index + 1,
         user.id,
         user.name,
         user.role,
