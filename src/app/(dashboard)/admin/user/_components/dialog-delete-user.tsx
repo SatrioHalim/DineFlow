@@ -45,7 +45,7 @@ export default function DialogDeleteUser({
       deleteUserState?.status === "error" &&
       lastHandledStatusRef.current !== "error"
     ) {
-      toast.error("delete User Failed", {
+      toast.error("Delete User Failed", {
         description: deleteUserState.errors?._form?.[0],
       });
       lastHandledStatusRef.current = "error";
@@ -54,7 +54,7 @@ export default function DialogDeleteUser({
       deleteUserState?.status === "success" &&
       lastHandledStatusRef.current !== "success"
     ) {
-      toast.success("delete user success");
+      toast.success("Delete user success");
       refetch();
       lastHandledStatusRef.current = "success";
       handleChangeAction?.(false);

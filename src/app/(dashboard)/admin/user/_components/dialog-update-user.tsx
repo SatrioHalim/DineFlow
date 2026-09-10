@@ -74,7 +74,7 @@ export default function DialogUpdateUser({
       updateUserState?.status === "error" &&
       lastHandledStatusRef.current !== "error"
     ) {
-      toast.error("Update User Failed", {
+      toast.error("Update user failed", {
         description: updateUserState.errors?._form?.[0],
       });
       lastHandledStatusRef.current = "error";
