@@ -17,6 +17,7 @@ import { Menu } from "@/validations/menu-validation";
 import Image from "next/image";
 import { cn, convertIDR } from "@/lib/utils";
 import { HEADER_TABLE_MENU } from "@/constants/menu-constant";
+import DialogCreateMenu from "./dialog-create-menu";
 
 export default function MenuManagement() {
   const supabase = createClient();
@@ -87,7 +88,7 @@ export default function MenuManagement() {
         <div>
           <p>Base: {convertIDR(menu.price)}</p>
           <p>Discount: {menu.discount}%</p>
-          <p>
+          <p className="font-bold">
             After Discount:{" "}
             {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
           </p>
@@ -159,10 +160,10 @@ export default function MenuManagement() {
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             ></DialogTrigger>
-            {/* <DialogCreateUser
+            <DialogCreateMenu
               refetch={refetch}
               onSuccess={() => setOpenCreateUserDialog(false)}
-            ></DialogCreateUser> */}
+            ></DialogCreateMenu>
           </Dialog>
         </div>
       </div>
