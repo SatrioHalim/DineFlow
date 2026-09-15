@@ -18,6 +18,7 @@ import Image from "next/image";
 import { cn, convertIDR } from "@/lib/utils";
 import { HEADER_TABLE_MENU } from "@/constants/menu-constant";
 import DialogCreateMenu from "./dialog-create-menu";
+import DialogUpdateMenu from "./dialog-update-menu";
 
 export default function MenuManagement() {
   const supabase = createClient();
@@ -177,13 +178,13 @@ export default function MenuManagement() {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       ></DataTable>
-      {/* <DialogUpdateUser
+      <DialogUpdateMenu
         open={selectedAction !== null && selectedAction.type === "update"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
-      ></DialogUpdateUser>
-      <DialogDeleteUser
+      ></DialogUpdateMenu>
+      {/* <DialogDeleteUser
         open={selectedAction !== null && selectedAction.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}

@@ -1,7 +1,7 @@
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { InputGroupTextarea } from "../ui/input-group";
+import { Textarea } from "../ui/textarea";
 
 export default function FormInput<T extends FieldValues>({
   form,
@@ -28,7 +28,7 @@ export default function FormInput<T extends FieldValues>({
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={inputId}>{label}</FieldLabel>
           {type === "textarea" ? (
-            <InputGroupTextarea
+            <Textarea
               {...field}
               id={inputId}
               aria-invalid={fieldState.invalid}
