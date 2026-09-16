@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadFile } from "@/actions/storage-action";
+import { deleteFile, uploadFile } from "@/actions/storage-action";
 import { INITIAL_MENU, INITIAL_STATE_MENU } from "@/constants/menu-constant";
 import { createClient } from "@/lib/supabase/server";
 import { MenuFormState } from "@/types/menu";
@@ -165,6 +165,58 @@ export async function updateMenu(
       },
     };
   }
+  return {
+    status: "success",
+  };
+}
+
+export async function deleteMenu(prevState: MenuFormState, formData: FormData) {
+  const supabase = await createClient();
+  const image = (formData.get("image_url") as string | null) ?? "";
+  const menuId = (formData.get("id") as string | null) ?? "";
+
+  if (!menuId) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: ["menu id is required"],
+      },
+    };
+  }
+
+  if (image) {
+    const filePath = image.includes("/images/")
+      ? image.split("/images/")[1]
+      : image;
+
+    if (filePath) {
+      const { status, errors } = await deleteFile("images", filePath);
+
+      if (status === "error") {
+        return {
+          status: "error",
+          errors: {
+            ...prevState.errors,
+            _form: [errors?._form?.[0] ?? "Unknown error"],
+          },
+        };
+      }
+    }
+  }
+
+  const { error } = await supabase.from("menus").delete().eq("id", menuId);
+
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
+      },
+    };
+  }
+
   return {
     status: "success",
   };

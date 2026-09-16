@@ -5,20 +5,19 @@ import DropdownAction from "@/components/common/dropdown-action";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { HEADER_TABLE_USER } from "@/constants/user-constant";
 import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Edit, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Profile } from "@/types/auth";
 import { Menu } from "@/validations/menu-validation";
 import Image from "next/image";
 import { cn, convertIDR } from "@/lib/utils";
 import { HEADER_TABLE_MENU } from "@/constants/menu-constant";
 import DialogCreateMenu from "./dialog-create-menu";
 import DialogUpdateMenu from "./dialog-update-menu";
+import DialogDeleteMenu from "./dialog-delete-menu";
 
 export default function MenuManagement() {
   const supabase = createClient();
@@ -184,12 +183,12 @@ export default function MenuManagement() {
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
       ></DialogUpdateMenu>
-      {/* <DialogDeleteUser
+      <DialogDeleteMenu
         open={selectedAction !== null && selectedAction.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
-      ></DialogDeleteUser> */}
+      ></DialogDeleteMenu>
     </div>
   );
 }
