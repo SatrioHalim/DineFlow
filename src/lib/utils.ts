@@ -20,3 +20,11 @@ export function getImageData(event: ChangeEvent<HTMLInputElement>) {
     displayUrl,
   };
 }
+
+export function convertIDR(number: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(number);
+}
