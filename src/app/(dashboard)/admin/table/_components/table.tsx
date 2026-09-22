@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_TABLE } from "@/constants/table-constant";
+import DialogCreateTable from "./dialog-create-table";
 
 export default function TableManagement() {
   const supabase = createClient();
@@ -40,9 +41,17 @@ export default function TableManagement() {
         .order("created_at");
 
       if (currentSearch) {
-        query.or(
-          `name.ilike.%${currentSearch}%, capacity.ilike.%${currentSearch}%,status.ilike.%${currentSearch}%`,
-        );
+        const filters = [
+          `name.ilike.%${currentSearch}%`,
+          `status.ilike.%${currentSearch}%`,
+        ];
+        const capacitySearch = Number(currentSearch);
+
+        if (Number.isFinite(capacitySearch)) {
+          filters.push(`capacity.eq.${capacitySearch}`);
+        }
+
+        query.or(filters.join(","));
       }
 
       const result = await query;
@@ -143,10 +152,10 @@ export default function TableManagement() {
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             ></DialogTrigger>
-            {/* <DialogCreateMenu
+            <DialogCreateTable
               refetch={refetch}
               onSuccess={() => setOpenCreateUserDialog(false)}
-            ></DialogCreateMenu> */}
+            ></DialogCreateTable>
           </Dialog>
         </div>
       </div>
