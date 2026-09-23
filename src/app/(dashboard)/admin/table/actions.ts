@@ -103,55 +103,36 @@ export async function updateTable(
   };
 }
 
+export async function deleteTable(
+  prevState: TableFormState,
+  formData: FormData,
+) {
+  const supabase = await createClient();
+  const tableId = (formData.get("id") as string | null) ?? "";
 
-// export async function deleteMenu(prevState: MenuFormState, formData: FormData) {
-//   const supabase = await createClient();
-//   const image = (formData.get("image_url") as string | null) ?? "";
-//   const menuId = (formData.get("id") as string | null) ?? "";
+  if (!tableId) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: ["table id is required"],
+      },
+    };
+  }
 
-//   if (!menuId) {
-//     return {
-//       status: "error",
-//       errors: {
-//         ...prevState.errors,
-//         _form: ["menu id is required"],
-//       },
-//     };
-//   }
+  const { error } = await supabase.from("tables").delete().eq("id", tableId);
 
-//   if (image) {
-//     const filePath = image.includes("/images/")
-//       ? image.split("/images/")[1]
-//       : image;
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
+      },
+    };
+  }
 
-//     if (filePath) {
-//       const { status, errors } = await deleteFile("images", filePath);
-
-//       if (status === "error") {
-//         return {
-//           status: "error",
-//           errors: {
-//             ...prevState.errors,
-//             _form: [errors?._form?.[0] ?? "Unknown error"],
-//           },
-//         };
-//       }
-//     }
-//   }
-
-//   const { error } = await supabase.from("menus").delete().eq("id", menuId);
-
-//   if (error) {
-//     return {
-//       status: "error",
-//       errors: {
-//         ...prevState.errors,
-//         _form: [error.message],
-//       },
-//     };
-//   }
-
-//   return {
-//     status: "success",
-//   };
-// }
+  return {
+    status: "success",
+  };
+}

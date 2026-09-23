@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FieldGroup } from "@/components/ui/field";
-import { AVAILABILITY_LIST } from "@/constants/menu-constant";
 import { STATUS_TABLE_LIST } from "@/constants/table-constant";
 import { Loader2 } from "lucide-react";
 import { FormEvent } from "react";

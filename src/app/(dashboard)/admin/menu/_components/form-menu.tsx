@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FieldGroup } from "@/components/ui/field";
-import { ROLE_LIST } from "@/constants/auth-constant";
 import { AVAILABILITY_LIST, CATEGORY_LIST } from "@/constants/menu-constant";
 import { Preview } from "@/types/general";
 import { Loader2 } from "lucide-react";
