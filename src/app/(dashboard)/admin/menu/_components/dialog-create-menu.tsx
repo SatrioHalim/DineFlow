@@ -14,7 +14,7 @@ import { createMenu } from "../actions";
 import { INITIAL_MENU, INITIAL_STATE_MENU } from "@/constants/menu-constant";
 import FormMenu from "./form-menu";
 
-type DialogCreateUserProps = {
+type DialogCreateMenuProps = {
   refetch: () => void;
   onSuccess?: () => void;
 };
@@ -22,7 +22,7 @@ type DialogCreateUserProps = {
 export default function DialogCreateMenu({
   refetch,
   onSuccess,
-}: DialogCreateUserProps) {
+}: DialogCreateMenuProps) {
   const form = useForm<MenuForm>({
     resolver: zodResolver(menuFormSchema),
     defaultValues: INITIAL_MENU,

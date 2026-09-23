@@ -117,7 +117,7 @@ export default function UserManagement() {
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search by name"
+            placeholder="Search..."
             onChange={(e) => handleChangeSearch(e.target.value)}
           ></Input>
           <Dialog
