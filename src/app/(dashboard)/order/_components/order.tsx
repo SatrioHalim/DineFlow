@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_ORDER } from "@/constants/order-constant";
+import DialogCreateOrder from "./dialog-create-order";
 
 export default function OrderManagement() {
   const supabase = createClient();
@@ -62,6 +63,18 @@ export default function OrderManagement() {
       }
 
       return result;
+    },
+  });
+
+  const { data: tables, refetch: refetchTables } = useQuery({
+    queryKey: ["tables"],
+    queryFn: async () => {
+      const result = await supabase
+        .from("tables")
+        .select("*")
+        .order("created_at")
+        .order("status");
+      return result.data;
     },
   });
 
@@ -118,10 +131,12 @@ export default function OrderManagement() {
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
             ></DialogTrigger>
-            {/* <DialogCreateTable
+            <DialogCreateOrder
               refetch={refetch}
+              refetchTables={refetchTables}
               onSuccess={() => setOpenCreateUserDialog(false)}
-            ></DialogCreateTable> */}
+              tables={tables}
+            ></DialogCreateOrder>
           </Dialog>
         </div>
       </div>
