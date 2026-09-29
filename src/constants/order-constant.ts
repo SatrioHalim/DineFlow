@@ -33,3 +33,11 @@ export const STATUS_CREATE_ORDER = [
     label: "Process",
   },
 ];
+
+export const HEADER_TABLE_DETAIL_ORDER = [
+  "No",
+  "Menu",
+  "Total",
+  "Status",
+  "Action",
+];

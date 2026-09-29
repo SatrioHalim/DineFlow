@@ -27,8 +27,8 @@ import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import Link from "next/link";
 
 export default function OrderManagement() {
+  const [openCreateOrderDialog, setOpenCreateOrderDialog] = useState(false);
   const supabase = createClient();
-  const [openCreateUserDialog, setOpenCreateUserDialog] = useState(false);
   const {
     currentLimit,
     currentPage,
@@ -233,8 +233,8 @@ export default function OrderManagement() {
             onChange={(e) => handleChangeSearch(e.target.value)}
           ></Input>
           <Dialog
-            open={openCreateUserDialog}
-            onOpenChange={setOpenCreateUserDialog}
+            open={openCreateOrderDialog}
+            onOpenChange={setOpenCreateOrderDialog}
           >
             <DialogTrigger
               render={<Button variant={"outline"}>Create</Button>}
@@ -242,7 +242,7 @@ export default function OrderManagement() {
             <DialogCreateOrder
               refetch={refetch}
               refetchTables={refetchTables}
-              onSuccess={() => setOpenCreateUserDialog(false)}
+              onSuccess={() => setOpenCreateOrderDialog(false)}
               tables={tables}
             ></DialogCreateOrder>
           </Dialog>
