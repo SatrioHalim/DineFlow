@@ -9,13 +9,14 @@ import { HEADER_TABLE_USER } from "@/constants/user-constant";
 import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Edit, Pencil, Trash2 } from "lucide-react";
+import { Edit, Pencil, Trash2, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import DialogCreateUser from "./dialog-create-user";
 import { Profile } from "@/types/auth";
 import DialogUpdateUser from "./dialog-update-user";
 import DialogDeleteUser from "./dialog-delete-user";
+import Image from "next/image";
 
 export default function UserManagement() {
   const supabase = createClient();
@@ -65,6 +66,23 @@ export default function UserManagement() {
     return (users?.data || []).map((user, index) => {
       return [
         currentLimit * (currentPage - 1) + index + 1,
+        <div className="flex items-center gap-2">
+          {user.avatar_url ? (
+            <Image
+              src={user.avatar_url}
+              alt={user.name}
+              width={60}
+              height={60}
+              sizes="64px"
+              quality={85}
+              className="size-16 shrink-0 rounded-md object-cover"
+            />
+          ) : (
+            <div className="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed bg-gray-200">
+              <UserRound className="size-6 text-gray-500" />
+            </div>
+          )}
+        </div>,
         user.id,
         user.name,
         user.role,
