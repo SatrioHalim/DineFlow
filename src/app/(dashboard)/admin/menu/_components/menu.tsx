@@ -30,6 +30,7 @@ export default function MenuManagement() {
     handleChangePage,
     handleChangeSearch,
   } = useDataTable();
+  
   const {
     data: menus,
     isLoading,

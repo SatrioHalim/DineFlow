@@ -23,6 +23,8 @@ export default function FormSelect<T extends FieldValues>({
   selectItem: { value: string; label: string; disabled?: boolean }[];
 }) {
   const inputId = `form-${name}`;
+  const selectedValue = form.watch(name) as string | undefined;
+  const selectedItem = selectItem.find((item) => item.value === selectedValue);
 
   return (
     <Controller
@@ -37,7 +39,9 @@ export default function FormSelect<T extends FieldValues>({
                 "border-red-500": form.formState.errors[name]?.message,
               })}
             >
-              <SelectValue placeholder={`Select ${label}`}></SelectValue>
+              <SelectValue placeholder={`Select ${label}`}>
+                {selectedItem?.label}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

@@ -1,3 +1,5 @@
+"use client";
+
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/constants/data-table-constant";
 import { useState } from "react";
 import useDebounce from "./use-debounce";
@@ -6,6 +8,7 @@ export default function useDataTable() {
   const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE);
   const [currentLimit, setCurrentLimit] = useState(DEFAULT_LIMIT);
   const [currentSearch, setCurrentSearch] = useState("");
+  const [currentFilter, setCurrentFilter] = useState("");
   const debounce = useDebounce();
 
   const handleChangePage = (page: number) => {
@@ -24,6 +27,12 @@ export default function useDataTable() {
     }, 500);
   };
 
+  const handleChangeFilter = (filter: string) => {
+    setCurrentFilter(filter);
+    setCurrentSearch("");
+    setCurrentPage(DEFAULT_PAGE);
+  };
+
   return {
     currentPage,
     handleChangePage,
@@ -31,5 +40,7 @@ export default function useDataTable() {
     handleChangeLimit,
     currentSearch,
     handleChangeSearch,
+    currentFilter,
+    handleChangeFilter,
   };
 }

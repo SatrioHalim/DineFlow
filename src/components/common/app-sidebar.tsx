@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/actions/auth-action";
 import { useAuthStore } from "@/stores/auth-store";
+import { environment } from "@/configs/environment";
 
 export default function AppSidebar() {
   const { isMobile } = useSidebar();
@@ -151,6 +152,7 @@ export default function AppSidebar() {
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
+        <p className="text-xs text-muted-foreground text-center">{environment.APP_VERSION}</p>
       </SidebarFooter>
     </Sidebar>
   );
