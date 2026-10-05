@@ -3,7 +3,7 @@ create table public.orders (
   order_id text,
   customer_name text,
   status text,
-  payment_url text,
+  payment_token text,
   table_id integer references tables on delete set null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
