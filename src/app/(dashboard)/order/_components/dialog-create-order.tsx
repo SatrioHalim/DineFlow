@@ -25,15 +25,11 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 type DialogCreateOrderProps = {
-  refetch: () => void;
-  refetchTables: () => void;
   onSuccess?: () => void;
   tables: Table[] | undefined | null;
 };
 
 export default function DialogCreateOrder({
-  refetch,
-  refetchTables,
   onSuccess,
   tables,
 }: DialogCreateOrderProps) {
@@ -76,18 +72,9 @@ export default function DialogCreateOrder({
       toast.success("Create Order Success");
       form.reset();
       onSuccess?.();
-      refetch();
-      refetchTables();
       lastHandledStatusRef.current = "success";
     }
-  }, [
-    createOrderState,
-    createOrderAction,
-    form,
-    onSuccess,
-    refetch,
-    refetchTables,
-  ]);
+  }, [createOrderState, createOrderAction, form, onSuccess]);
 
   return (
     <DialogContent className="sm:max-w-[425px] max-h-[90vh]">

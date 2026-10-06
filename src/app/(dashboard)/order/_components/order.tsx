@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import useDataTable from "@/hooks/use-data-table";
-import { createClient } from "@/lib/supabase/client";
+import { createClientSupabase } from "@/lib/supabase/default";
 import { useQuery } from "@tanstack/react-query";
 import { Ban, Link2Icon, ScrollText } from "lucide-react";
 import {
@@ -30,7 +30,7 @@ import { useAuthStore } from "@/stores/auth-store";
 export default function OrderManagement() {
   const [openCreateOrderDialog, setOpenCreateOrderDialog] = useState(false);
   const profile = useAuthStore((state) => state.profile);
-  const supabase = createClient();
+  const supabase = createClientSupabase();
   const {
     currentLimit,
     currentPage,
@@ -42,7 +42,7 @@ export default function OrderManagement() {
   const {
     data: orders,
     isLoading,
-    refetch,
+    refetch: refetchOrders,
   } = useQuery({
     queryKey: ["orders", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
@@ -89,6 +89,28 @@ export default function OrderManagement() {
       return result.data;
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("change-order")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+        },
+        () => {
+          refetchOrders();
+          refetchTables();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const [selectedAction, setSelectedAction] = useState<{
     data: Table;
@@ -147,11 +169,11 @@ export default function OrderManagement() {
       lastHandledStatusRef.current !== "success"
     ) {
       toast.success("Update Reservation Success");
-      refetch();
+      refetchOrders();
       refetchTables();
       lastHandledStatusRef.current = "success";
     }
-  }, [reservedState, reservedAction, refetch, refetchTables]);
+  }, [reservedState, reservedAction, refetchOrders, refetchTables]);
 
   const reservedActionList = [
     {
@@ -243,8 +265,6 @@ export default function OrderManagement() {
                 render={<Button variant={"outline"}>Create</Button>}
               ></DialogTrigger>
               <DialogCreateOrder
-                refetch={refetch}
-                refetchTables={refetchTables}
                 onSuccess={() => setOpenCreateOrderDialog(false)}
                 tables={tables}
               ></DialogCreateOrder>
