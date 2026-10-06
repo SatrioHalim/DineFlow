@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Success() {
@@ -16,12 +16,23 @@ export default function Success() {
   const { mutate } = useMutation({
     mutationKey: ["mutateUpdateStatusOrder"],
     mutationFn: async () => {
-      await supabase
+      const { data } = await supabase
         .from("orders")
         .update({
           status: "settled",
         })
-        .eq("order_id", orderId);
+        .eq("order_id", orderId)
+        .select()
+        .single();
+
+      if (data) {
+        await supabase
+          .from("tables")
+          .update({
+            status: "available",
+          })
+          .eq("id", data.table_id);
+      }
     },
   });
 

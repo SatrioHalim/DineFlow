@@ -25,9 +25,11 @@ import DialogCreateOrder from "./dialog-create-order";
 import { updateReservation } from "../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import Link from "next/link";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function OrderManagement() {
   const [openCreateOrderDialog, setOpenCreateOrderDialog] = useState(false);
+  const profile = useAuthStore((state) => state.profile);
   const supabase = createClient();
   const {
     currentLimit,
@@ -195,7 +197,7 @@ export default function OrderManagement() {
         </div>,
         <DropdownAction
           menu={
-            order.status === "reserved"
+            order.status === "reserved" && profile.role !== "kitchen"
               ? reservedActionList.map((item) => ({
                   label: item.label,
                   action: () =>
@@ -232,20 +234,22 @@ export default function OrderManagement() {
             placeholder="Search..."
             onChange={(e) => handleChangeSearch(e.target.value)}
           ></Input>
-          <Dialog
-            open={openCreateOrderDialog}
-            onOpenChange={setOpenCreateOrderDialog}
-          >
-            <DialogTrigger
-              render={<Button variant={"outline"}>Create</Button>}
-            ></DialogTrigger>
-            <DialogCreateOrder
-              refetch={refetch}
-              refetchTables={refetchTables}
-              onSuccess={() => setOpenCreateOrderDialog(false)}
-              tables={tables}
-            ></DialogCreateOrder>
-          </Dialog>
+          {profile.role !== "kitchen" && (
+            <Dialog
+              open={openCreateOrderDialog}
+              onOpenChange={setOpenCreateOrderDialog}
+            >
+              <DialogTrigger
+                render={<Button variant={"outline"}>Create</Button>}
+              ></DialogTrigger>
+              <DialogCreateOrder
+                refetch={refetch}
+                refetchTables={refetchTables}
+                onSuccess={() => setOpenCreateOrderDialog(false)}
+                tables={tables}
+              ></DialogCreateOrder>
+            </Dialog>
+          )}
         </div>
       </div>
       <DataTable
