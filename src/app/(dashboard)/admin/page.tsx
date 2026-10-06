@@ -1,11 +1,9 @@
+import Dashboard from "./_components/dashboard";
+
 export const metadata = {
   title: "DineFlow | Dashboard",
 };
 
-export default function AdminDashboardPage() {
-  return (
-    <div>
-      <button>Dashboard</button>
-    </div>
-  );
+export default function MenuManagementPage() {
+  return <Dashboard></Dashboard>;
 }
