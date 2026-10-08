@@ -95,6 +95,7 @@ export default function DetailOrder({ id }: { id: string }) {
       return result;
     },
     enabled: !!order?.id,
+    refetchOnMount: "always",
   });
 
   const [updateStatusOrderState, updateStatusOrderAction] = useActionState(
