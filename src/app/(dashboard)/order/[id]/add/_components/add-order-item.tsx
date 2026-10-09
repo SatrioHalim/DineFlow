@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { FILTER_MENU } from "@/constants/order-constant";
 import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import CardMenu from "./card-menu";
 import LoadingCardMenu from "./loading-cart-menu";
 import CartSection from "./cart";
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Cart } from "@/types/order";
 import { Menu } from "@/validations/menu-validation";
 import { addOrderItem } from "../../../actions";
@@ -18,6 +19,8 @@ import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 
 export default function AddOrderItem({ id }: { id: string }) {
   const supabase = createClient();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     currentSearch,
     handleChangeSearch,
@@ -121,6 +124,13 @@ export default function AddOrderItem({ id }: { id: string }) {
 
   const [addOrderItemState, addOrderItemAction, isPendingAddOrderItem] =
     useActionState(addOrderItem, INITIAL_STATE_ACTION);
+
+  useEffect(() => {
+    if (addOrderItemState.status !== "success") return;
+
+    queryClient.invalidateQueries({ queryKey: ["orders_menu"] });
+    router.replace(`/order/${id}`);
+  }, [addOrderItemState.status, id, queryClient, router]);
 
   const handleOrder = async () => {
     const data = {

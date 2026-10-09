@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { FormState } from "@/types/general";
 import { Cart, OrderFormState } from "@/types/order";
 import { orderFormSchema } from "@/validations/order-validation";
-import { redirect } from "next/navigation";
 import midtrans from "midtrans-client";
 import { is } from "zod/locales";
 
@@ -140,7 +139,9 @@ export async function addOrderItem(
     };
   }
 
-  redirect(`/order/${data.order_id}`);
+  return {
+    status: "success",
+  };
 }
 
 export async function updateStatusOrderItem(
