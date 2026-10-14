@@ -119,7 +119,11 @@ export default function Summary({
               }
               onClick={handleGeneratePayment}
               type="submit"
-              disabled={!isAllServed || isPendingGeneratePayment}
+              disabled={
+                !isAllServed ||
+                isPendingGeneratePayment ||
+                orderMenu?.length === 0
+              }
             >
               {isPendingGeneratePayment ? (
                 <Loader2 className="animate-spin"></Loader2>
