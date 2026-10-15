@@ -164,7 +164,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardDescription>Total Order</CardDescription>
-            <CardTitle className="text-3xl font-bold">{totalOrder}</CardTitle>
+            <CardTitle className="text-3xl font-bold">{totalOrder ? totalOrder : 0}</CardTitle>
           </CardHeader>
           <CardFooter>
             <div className="text-muted-foreground text-sm">
@@ -195,9 +195,15 @@ export default function Dashboard() {
               {new Date().toLocaleDateString()}
             </CardDescription>
           </CardHeader>
-          <div className="w-full h-64 p-6">
-            <LineCharts data={orders}></LineCharts>
-          </div>
+          {orders ? (
+            <div className="w-full h-64 p-6">
+              <LineCharts data={orders}></LineCharts>
+            </div>
+          ) : (
+            <div className="w-full h-64 p-6 flex items-center justify-center">
+              <p className="text-muted-foreground text-2xl font-semibold">No data available</p>
+            </div>
+          )}
         </Card>
         <Card className="w-full lg:w-1/3">
           <CardHeader>
