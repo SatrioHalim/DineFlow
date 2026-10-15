@@ -2,13 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Table } from "@/validations/table-validation";
-import { createOrder } from "../actions";
-import { OrderForm, orderFormSchema } from "@/validations/order-validation";
+import { createOrderTakeaway } from "../actions";
 import {
-  INITIAL_ORDER,
-  INITIAL_STATE_ORDER,
-  STATUS_CREATE_ORDER,
+  OrderTakeawayForm,
+  orderTakeawayFormSchema,
+} from "@/validations/order-validation";
+import {
+  INITIAL_ORDER_TAKEAWAY,
+  INITIAL_STATE_ORDER_TAKEAWAY,
 } from "@/constants/order-constant";
 import {
   DialogClose,
@@ -20,26 +21,23 @@ import {
 } from "@/components/ui/dialog";
 import { FieldGroup } from "@/components/ui/field";
 import FormInput from "@/components/common/form-input";
-import FormSelect from "@/components/common/form-select";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 type DialogCreateOrderProps = {
-  onSuccess?: () => void;
-  tables: Table[] | undefined | null;
+  closeDialog: () => void;
 };
 
-export default function DialogCreateOrder({
-  onSuccess,
-  tables,
+export default function DialogCreateOrderTakeaway({
+  closeDialog,
 }: DialogCreateOrderProps) {
-  const form = useForm<OrderForm>({
-    resolver: zodResolver(orderFormSchema),
-    defaultValues: INITIAL_ORDER,
+  const form = useForm<OrderTakeawayForm>({
+    resolver: zodResolver(orderTakeawayFormSchema),
+    defaultValues: INITIAL_ORDER_TAKEAWAY,
   });
 
   const [createOrderState, createOrderAction, isPendingcreateOrder] =
-    useActionState(createOrder, INITIAL_STATE_ORDER);
+    useActionState(createOrderTakeaway, INITIAL_STATE_ORDER_TAKEAWAY);
   const lastHandledStatusRef = useRef<string | undefined>(undefined);
 
   const onSubmit = form.handleSubmit((data) => {
@@ -71,19 +69,19 @@ export default function DialogCreateOrder({
     ) {
       toast.success("Create Order Success");
       form.reset();
-      onSuccess?.();
+      closeDialog();
       lastHandledStatusRef.current = "success";
     }
-  }, [createOrderState, createOrderAction, form, onSuccess]);
+  }, [createOrderState, createOrderAction, form, closeDialog]);
 
   return (
     <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
       <DialogHeader>
-        <DialogTitle className={"text-xl"}>Create Order</DialogTitle>
+        <DialogTitle className={"text-xl"}>Create Order Takeaway</DialogTitle>
         <DialogDescription>Add a new order from customer</DialogDescription>
       </DialogHeader>
       <form id="form-create-table" onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-4 max-h-[50vh] px-1 overflow-y-auto">
+        <div className="space-y-4 max-h-[50vh] p-1 overflow-y-auto">
           <FieldGroup className="pb-2">
             <FormInput
               form={form}
@@ -91,22 +89,6 @@ export default function DialogCreateOrder({
               label="Customer Name"
               placeholder="Insert customer name here"
             ></FormInput>
-            <FormSelect
-              form={form}
-              name="table_id"
-              label="Table"
-              selectItem={(tables ?? []).map((table: Table) => ({
-                value: `${table.id}`,
-                label: `${table.name} - ${table.status} (${table.capacity} seats)`,
-                disabled: table.status !== "available",
-              }))}
-            ></FormSelect>
-            <FormSelect
-              form={form}
-              name="status"
-              label="Status"
-              selectItem={STATUS_CREATE_ORDER}
-            ></FormSelect>
           </FieldGroup>
         </div>
       </form>
