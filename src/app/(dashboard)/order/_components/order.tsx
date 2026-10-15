@@ -3,12 +3,12 @@
 import DataTable from "@/components/common/data-table";
 import DropdownAction from "@/components/common/dropdown-action";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import useDataTable from "@/hooks/use-data-table";
 import { createClientSupabase } from "@/lib/supabase/default";
 import { useQuery } from "@tanstack/react-query";
-import { Ban, Link2Icon, ScrollText } from "lucide-react";
+import { Ban, Link2Icon, Package, ScrollText, Utensils } from "lucide-react";
 import {
   startTransition,
   useActionState,
@@ -21,14 +21,26 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Table } from "@/validations/table-validation";
 import { HEADER_TABLE_ORDER } from "@/constants/order-constant";
-import DialogCreateOrder from "./dialog-create-order";
 import { updateReservation } from "../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
+import DialogCreateOrderDineIn from "./dialog-create-order-dine-in";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import DialogCreateOrderTakeaway from "./dialog-create-order-takeaway";
 
 export default function OrderManagement() {
-  const [openCreateOrderDialog, setOpenCreateOrderDialog] = useState(false);
+  const [createOrderType, setCreateOrderType] = useState<
+    "dine-in" | "takeaway" | null
+  >(null);
   const profile = useAuthStore((state) => state.profile);
   const supabase = createClientSupabase();
   const {
@@ -206,7 +218,7 @@ export default function OrderManagement() {
         currentLimit * (currentPage - 1) + index + 1,
         order.order_id,
         order.customer_name,
-        (order.tables as unknown as { name: string }).name,
+        (order.tables as unknown as { name: string })?.name || "Takeaway",
         <div
           className={cn("px-2 py-1 rounded-full text-white w-fit capitalize", {
             "bg-lime-600": order.status === "settled",
@@ -225,7 +237,7 @@ export default function OrderManagement() {
                   action: () =>
                     item.action(
                       order.id,
-                      (order.tables as unknown as { id: string }).id,
+                      (order.tables as unknown as { id: string })?.id,
                     ),
                 }))
               : [
@@ -247,6 +259,8 @@ export default function OrderManagement() {
     });
   }, [orders]);
 
+  const [openCreateOrder, setOpenCreateOrder] = useState(false);
+
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
@@ -257,19 +271,59 @@ export default function OrderManagement() {
             onChange={(e) => handleChangeSearch(e.target.value)}
           ></Input>
           {profile.role !== "kitchen" && (
-            <Dialog
-              open={openCreateOrderDialog}
-              onOpenChange={setOpenCreateOrderDialog}
+            <DropdownMenu
+              open={openCreateOrder}
+              onOpenChange={setOpenCreateOrder}
             >
-              <DialogTrigger
+              <DropdownMenuTrigger
                 render={<Button variant={"outline"}>Create</Button>}
-              ></DialogTrigger>
-              <DialogCreateOrder
-                onSuccess={() => setOpenCreateOrderDialog(false)}
-                tables={tables}
-              ></DialogCreateOrder>
-            </Dialog>
+              ></DropdownMenuTrigger>
+              <DropdownMenuGroup>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel className={"font-bold"}>
+                    Create Order
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator></DropdownMenuSeparator>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setOpenCreateOrder(false);
+                      setCreateOrderType("dine-in");
+                    }}
+                  >
+                    <Utensils className="size-4"></Utensils>
+                    Dine In
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setOpenCreateOrder(false);
+                      setCreateOrderType("takeaway");
+                    }}
+                  >
+                    <Package className="size-4"></Package>
+                    Take Away
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenuGroup>
+            </DropdownMenu>
           )}
+          <Dialog
+            open={createOrderType !== null}
+            onOpenChange={(open) => {
+              if (!open) setCreateOrderType(null);
+            }}
+          >
+            {createOrderType === "dine-in" && (
+              <DialogCreateOrderDineIn
+                tables={tables}
+                closeDialog={() => setCreateOrderType(null)}
+              />
+            )}
+            {createOrderType === "takeaway" && (
+              <DialogCreateOrderTakeaway
+                closeDialog={() => setCreateOrderType(null)}
+              />
+            )}
+          </Dialog>
         </div>
       </div>
       <DataTable
@@ -282,18 +336,6 @@ export default function OrderManagement() {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       ></DataTable>
-      {/* <DialogUpdateTable
-        open={selectedAction !== null && selectedAction.type === "update"}
-        refetch={refetch}
-        currentData={selectedAction?.data}
-        handleChangeAction={handleChangeAction}
-      ></DialogUpdateTable>
-      <DialogDeleteTable
-        open={selectedAction !== null && selectedAction.type === "delete"}
-        refetch={refetch}
-        currentData={selectedAction?.data}
-        handleChangeAction={handleChangeAction}
-      ></DialogDeleteTable> */}
     </div>
   );
 }

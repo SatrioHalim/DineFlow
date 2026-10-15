@@ -13,19 +13,24 @@ export default function CardMenu({
   onAddToCart: (item: Menu, type: "decrement" | "increment") => void;
 }) {
   return (
-    <Card key={menu.id} className="w-full h-full border shadow-sm p-0 gap-0">
-      <Image
-        src={`${menu.image_url}`}
-        alt={menu.name}
-        width={400}
-        height={400}
-        className="aspect-square w-full object-cover rounded-t-lg"
-      ></Image>
-      <CardContent className="flex-1 px-4 py-2">
-        <h3 className="text-lg font-semibold">{menu.name}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {menu.description}
-        </p>
+    <Card
+      key={menu.id}
+      className="w-full border shadow-sm p-0 gap-0 flex flex-col justify-between"
+    >
+      <CardContent className="p-0">
+        <Image
+          src={`${menu.image_url}`}
+          alt={menu.name}
+          width={400}
+          height={400}
+          className="w-full aspect-square object-cover rounded-t-lg"
+        ></Image>
+        <div className="px-4 py-2">
+          <h3 className="text-lg font-semibold">{menu.name}</h3>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {menu.description}
+          </p>
+        </div>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center">
         <div className="text-xl font-bold">{convertIDR(menu.price)}</div>

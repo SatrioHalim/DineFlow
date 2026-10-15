@@ -49,14 +49,17 @@ export default function CartSection({
         <h3 className="text-lg font-semibold">Customer Information</h3>
         {order && (
           <div className="space-y-4">
-            <div>
-              <Label className="space-y-2">Name</Label>
+            <div className="space-y-2">
+              <Label>Name</Label>
               <Input value={order?.customer_name} disabled></Input>
             </div>
-            <div>
-              <Label className="space-y-2">Table</Label>
+            <div className="space-y-2">
+              <Label>Table</Label>
               <Input
-                value={(order?.tables as unknown as { name: string })?.name}
+                value={
+                  (order?.tables as unknown as { name: string })?.name ||
+                  "Takeaway"
+                }
                 disabled
               ></Input>
             </div>

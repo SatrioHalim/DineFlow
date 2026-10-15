@@ -4,9 +4,11 @@ import { INITIAL_STATE_TABLE } from "@/constants/table-constant";
 import { createClient } from "@/lib/supabase/server";
 import { FormState } from "@/types/general";
 import { Cart, OrderFormState } from "@/types/order";
-import { orderFormSchema } from "@/validations/order-validation";
+import {
+  orderFormSchema,
+  orderTakeawayFormSchema,
+} from "@/validations/order-validation";
 import midtrans from "midtrans-client";
-import { is } from "zod/locales";
 
 export async function createOrder(
   prevState: OrderFormState,
@@ -66,6 +68,52 @@ export async function createOrder(
           ...(orderError ? [orderError.message] : []),
           ...(tableError ? [tableError.message] : []),
         ],
+      },
+    };
+  }
+  return {
+    status: "success",
+  };
+}
+
+export async function createOrderTakeaway(
+  prevState: OrderFormState,
+  formData: FormData | null,
+) {
+  if (!formData) {
+    return INITIAL_STATE_TABLE;
+  }
+
+  const validateFields = orderTakeawayFormSchema.safeParse({
+    customer_name: formData.get("customer_name"),
+  });
+
+  if (!validateFields.success) {
+    return {
+      status: "error",
+      errors: {
+        ...validateFields.error.flatten().fieldErrors,
+        _form: [],
+      },
+    };
+  }
+
+  const supabase = await createClient();
+
+  const orderId = `DF-${Date.now()}`;
+
+  const { error } = await supabase.from("orders").insert({
+    order_id: orderId,
+    customer_name: validateFields.data.customer_name,
+    status: "process",
+  });
+
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
       },
     };
   }

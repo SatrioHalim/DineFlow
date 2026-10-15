@@ -215,13 +215,13 @@ export default function Dashboard() {
                     <h3 className="font-semibold">{order.customer_name}</h3>
                     <p className="text-sm text-muted-foreground">
                       Table:{" "}
-                      {(order.tables as unknown as { name: string }).name}
+                      {(order?.tables as unknown as { name: string })?.name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Order ID: {order.order_id}
+                      Order ID: {order?.order_id}
                     </p>
                   </div>
-                  <Link href={`/order/${order.order_id}`}>
+                  <Link href={`/order/${order?.order_id}`}>
                     <Button className={"mt-2"} size={"sm"}>
                       Detail
                     </Button>
