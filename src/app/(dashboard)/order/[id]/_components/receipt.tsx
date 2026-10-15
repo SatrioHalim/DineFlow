@@ -70,7 +70,7 @@ const Receipt = ({
 
           <div className="flex justify-between gap-3">
             <span>Customer</span>
-            <span className="font-bold text-right break-words">
+            <span className="font-bold text-right wrap-break-word">
               {order?.customer_name || "Walk-in Customer"}
             </span>
           </div>
@@ -101,7 +101,9 @@ const Receipt = ({
               className="flex justify-between items-start gap-3"
             >
               <div className="min-w-0 flex-1">
-                <p className="break-words leading-relaxed">{item.menus.name}</p>
+                <p className="wrap-break-word leading-relaxed">
+                  {item.menus.name}
+                </p>
                 <p className="text-gray-600 mt-0.5">Qty: {item.quantity}</p>
               </div>
 
