@@ -24,6 +24,7 @@ const Receipt = ({
         quantity: number;
         status: string;
         id: string;
+        nominal: number;
       }[]
     | null
     | undefined;
@@ -108,7 +109,7 @@ const Receipt = ({
               </div>
 
               <p className="shrink-0 text-right tabular-nums">
-                {convertIDR(item.menus.price * item.quantity)}
+                {convertIDR(item.nominal)}
               </p>
             </div>
           ))}

@@ -173,7 +173,7 @@ export async function addOrderItem(
 ) {
   const supabase = await createClient();
 
-  const payload = data.items.map(({ total, menu, ...item }) => item);
+  const payload = data.items.map(({ menu, ...item }) => item);
 
   const { error } = await supabase.from("orders_menus").insert(payload);
 

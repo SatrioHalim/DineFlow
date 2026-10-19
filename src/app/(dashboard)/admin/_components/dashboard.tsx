@@ -49,31 +49,29 @@ export default function Dashboard() {
   });
 
   const { data: revenue } = useQuery({
-    queryKey: ["revenue-this-month"],
+    queryKey: ["revenue"],
     queryFn: async () => {
       const { data: dataThisMonth } = await supabase
         .from("orders_menus")
-        .select("quantity, menus (price), created_at")
+        .select("nominal, created_at")
         .gte("created_at", thisMonth); // gte : greater than or equal to
 
       const { data: dataLastMonth } = await supabase
         .from("orders_menus")
-        .select("quantity, menus (price), created_at")
+        .select("nominal, created_at")
         .gte("created_at", lastMonth)
         .lt("created_at", thisMonth); // lt : less than
 
       const totalRevenueThisMonth = (dataThisMonth ?? []).reduce(
         (sum, item) => {
-          const price = (item.menus as unknown as { price: number }).price;
-          return sum + price * item.quantity;
+          return sum + item.nominal;
         },
         0,
       ); // reduce : array function that reduces the array to a single value
 
       const totalRevenueLastMonth = (dataLastMonth ?? []).reduce(
         (sum, item) => {
-          const price = (item.menus as unknown as { price: number }).price;
-          return sum + price * item.quantity;
+          return sum + item.nominal;
         },
         0,
       );
@@ -164,7 +162,9 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardDescription>Total Order</CardDescription>
-            <CardTitle className="text-3xl font-bold">{totalOrder}</CardTitle>
+            <CardTitle className="text-3xl font-bold">
+              {totalOrder ? totalOrder : 0}
+            </CardTitle>
           </CardHeader>
           <CardFooter>
             <div className="text-muted-foreground text-sm">
@@ -195,9 +195,17 @@ export default function Dashboard() {
               {new Date().toLocaleDateString()}
             </CardDescription>
           </CardHeader>
-          <div className="w-full h-64 p-6">
-            <LineCharts data={orders}></LineCharts>
-          </div>
+          {orders ? (
+            <div className="w-full h-64 p-6">
+              <LineCharts data={orders}></LineCharts>
+            </div>
+          ) : (
+            <div className="w-full h-64 p-6 flex items-center justify-center">
+              <p className="text-muted-foreground text-2xl font-semibold">
+                No data available
+              </p>
+            </div>
+          )}
         </Card>
         <Card className="w-full lg:w-1/3">
           <CardHeader>
