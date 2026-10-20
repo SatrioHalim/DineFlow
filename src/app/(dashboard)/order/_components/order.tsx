@@ -36,6 +36,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DialogCreateOrderTakeaway from "./dialog-create-order-takeaway";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TableMap from "./table-map";
 
 export default function OrderManagement() {
   const [createOrderType, setCreateOrderType] = useState<
@@ -263,49 +265,66 @@ export default function OrderManagement() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
-        <h1 className="text-2xl font-bold">Order Management</h1>
-        <div className="flex gap-2">
-          <Input
-            placeholder="Search..."
-            onChange={(e) => handleChangeSearch(e.target.value)}
-          ></Input>
-          {profile.role !== "kitchen" && (
-            <DropdownMenu
-              open={openCreateOrder}
-              onOpenChange={setOpenCreateOrder}
-            >
-              <DropdownMenuTrigger
-                render={<Button variant={"outline"}>Create</Button>}
-              ></DropdownMenuTrigger>
-              <DropdownMenuGroup>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel className={"font-bold"}>
-                    Create Order
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator></DropdownMenuSeparator>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setOpenCreateOrder(false);
-                      setCreateOrderType("dine-in");
-                    }}
-                  >
-                    <Utensils className="size-4"></Utensils>
-                    Dine In
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setOpenCreateOrder(false);
-                      setCreateOrderType("takeaway");
-                    }}
-                  >
-                    <Package className="size-4"></Package>
-                    Take Away
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenuGroup>
-            </DropdownMenu>
-          )}
+      <Tabs defaultValue={"list"}>
+        <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
+          <h1 className="text-2xl font-bold">Order Management</h1>
+          <TabsList>
+            <TabsTrigger value={"list"} className={"p-4"}>
+              Order List
+            </TabsTrigger>
+            <TabsTrigger value={"map"} className={"p-4"}>
+              Table Map
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value={"list"}>
+          <div className="flex gap-2 justify-between mb-4">
+            <Input
+              className="max-w-64"
+              placeholder="Search..."
+              onChange={(e) => handleChangeSearch(e.target.value)}
+            ></Input>
+            {profile.role !== "kitchen" && (
+              <DropdownMenu
+                open={openCreateOrder}
+                onOpenChange={setOpenCreateOrder}
+              >
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant={"outline"} className={"ml-auto"}>
+                      Create
+                    </Button>
+                  }
+                ></DropdownMenuTrigger>
+                <DropdownMenuGroup>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel className={"font-bold"}>
+                      Create Order
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator></DropdownMenuSeparator>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpenCreateOrder(false);
+                        setCreateOrderType("dine-in");
+                      }}
+                    >
+                      <Utensils className="size-4"></Utensils>
+                      Dine In
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpenCreateOrder(false);
+                        setCreateOrderType("takeaway");
+                      }}
+                    >
+                      <Package className="size-4"></Package>
+                      Take Away
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenuGroup>
+              </DropdownMenu>
+            )}
+          </div>
           <Dialog
             open={createOrderType !== null}
             onOpenChange={(open) => {
@@ -324,18 +343,21 @@ export default function OrderManagement() {
               />
             )}
           </Dialog>
-        </div>
-      </div>
-      <DataTable
-        header={HEADER_TABLE_ORDER}
-        isLoading={isLoading}
-        data={filteredData}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        currentLimit={currentLimit}
-        onChangePage={handleChangePage}
-        onChangeLimit={handleChangeLimit}
-      ></DataTable>
+          <DataTable
+            header={HEADER_TABLE_ORDER}
+            isLoading={isLoading}
+            data={filteredData}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            currentLimit={currentLimit}
+            onChangePage={handleChangePage}
+            onChangeLimit={handleChangeLimit}
+          ></DataTable>
+        </TabsContent>
+        <TabsContent value={"map"}>
+          <TableMap tables={tables || []}></TableMap>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
