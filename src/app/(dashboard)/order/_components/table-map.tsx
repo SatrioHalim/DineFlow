@@ -22,9 +22,11 @@ export function TableNode({
     capacity: number;
     status: string;
     order?: {
+      id: number;
       order_id: string;
       customer_name: string;
     };
+    handleReservation: (id: string, table_id: string, status: string) => void;
   };
 }) {
   const [openCreateOrder, setOpenCreateOrder] = useState(false);
@@ -68,12 +70,40 @@ export function TableNode({
               <p className="text-xs text-muted-foreground">
                 Customer Name : {data.order.customer_name}
               </p>
-              <Link
-                className={"mt-2 w-full"}
-                href={`/order/${data.order.order_id}`}
-              >
-                <Button>View Detail Order</Button>
-              </Link>
+              {data.status === "unavailable" ? (
+                <Link
+                  className={"mt-2 w-full"}
+                  href={`/order/${data.order.order_id}`}
+                >
+                  <Button>View Detail Order</Button>
+                </Link>
+              ) : (
+                <div className="w-full flex gap-2">
+                  <Button
+                    variant={"destructive"}
+                    onClick={() =>
+                      data.handleReservation(
+                        `${data.order!.id}`,
+                        data.id,
+                        "canceled",
+                      )
+                    }
+                  >
+                    Canceled
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      data.handleReservation(
+                        `${data.order!.id}`,
+                        data.id,
+                        "process",
+                      )
+                    }
+                  >
+                    Process
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <Dialog open={openCreateOrder} onOpenChange={setOpenCreateOrder}>
@@ -98,9 +128,16 @@ export function TableNode({
 export default function TableMap({
   tables,
   activeOrders,
+  handleReservation,
 }: {
   tables: TableMapType[];
-  activeOrders: { order_id: string; customer_name: string; tables: unknown }[];
+  activeOrders: {
+    id: number;
+    order_id: string;
+    customer_name: string;
+    tables: unknown;
+  }[];
+  handleReservation: (id: string, table_id: string, status: string) => void;
 }) {
   const nodeTypes = {
     tableNode: TableNode,
@@ -118,10 +155,11 @@ export default function TableMap({
         order: activeOrders.find((order) => {
           return (order.tables as unknown as { id: string })?.id === table.id;
         }),
+        handleReservation,
       },
       type: "tableNode",
     }));
-  }, [tables]);
+  }, [tables, activeOrders, handleReservation]);
 
   return (
     <div className="w-full h-[80vh] border rounded-lg">

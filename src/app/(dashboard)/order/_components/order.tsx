@@ -43,6 +43,7 @@ export default function OrderManagement() {
   const [createOrderType, setCreateOrderType] = useState<
     "dine-in" | "takeaway" | null
   >(null);
+
   const profile = useAuthStore((state) => state.profile);
   const supabase = createClientSupabase();
   const {
@@ -210,8 +211,6 @@ export default function OrderManagement() {
       lastHandledStatusRef.current !== "success"
     ) {
       toast.success("Update Reservation Success");
-      refetchOrders();
-      refetchTables();
       lastHandledStatusRef.current = "success";
     }
   }, [reservedState, reservedAction, refetchOrders, refetchTables]);
@@ -394,6 +393,13 @@ export default function OrderManagement() {
           <TableMap
             tables={tables || []}
             activeOrders={activeOrders || []}
+            handleReservation={(
+              id: string,
+              table_id: string,
+              status: string,
+            ) => {
+              handleReservation({ id, table_id, status });
+            }}
           ></TableMap>
         </TabsContent>
       </Tabs>
