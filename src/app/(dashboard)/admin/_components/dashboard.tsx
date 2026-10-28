@@ -1,5 +1,6 @@
 "use client";
 
+import InteractiveAreaChart from "@/components/common/interactive-area-chart";
 import LineCharts from "@/components/common/line-chart";
 import { Button } from "@/components/ui/button";
 import {
@@ -127,6 +128,55 @@ export default function Dashboard() {
     },
   });
 
+  const { data: revenueTrend = [] } = useQuery({
+    queryKey: ["revenue-trend"],
+    queryFn: async () => {
+      const startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+      startDate.setDate(startDate.getDate() - 89);
+
+      const { data, error } = await supabase
+        .from("orders")
+        .select("created_at, orders_menus(nominal)")
+        .eq("status", "settled")
+        .gte("created_at", startDate.toISOString())
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+
+      const dailyRevenue: Record<string, number> = {};
+
+      // Initialize 7 days, including days with no revenue.
+      for (let i = 0; i < 90; i++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+
+        const key = date.toLocaleDateString("en-CA");
+        dailyRevenue[key] = 0;
+      }
+
+      for (const order of data ?? []) {
+        const date = new Date(order.created_at).toLocaleDateString("en-CA");
+
+        const orderRevenue = (order.orders_menus ?? []).reduce(
+          (sum, item) => sum + Number(item.nominal ?? 0),
+          0,
+        );
+
+        if (date in dailyRevenue) {
+          dailyRevenue[date] += orderRevenue;
+        }
+      }
+
+      return Object.entries(dailyRevenue).map(([date, revenue]) => ({
+        date,
+        revenue,
+      }));
+    },
+  });
+
+  console.log("revenueTrend", revenueTrend);
+
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
@@ -241,6 +291,9 @@ export default function Dashboard() {
             )}
           </div>
         </Card>
+      </div>
+      <div className="mt-4">
+        <InteractiveAreaChart data={revenueTrend}></InteractiveAreaChart>
       </div>
     </div>
   );
