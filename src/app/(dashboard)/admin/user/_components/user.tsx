@@ -5,11 +5,11 @@ import DropdownAction from "@/components/common/dropdown-action";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { HEADER_TABLE_USER } from "@/constants/user-constant";
+import { FILTER_ROLE, HEADER_TABLE_USER } from "@/constants/user-constant";
 import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Edit, Pencil, Trash2, UserRound } from "lucide-react";
+import { Pencil, Trash2, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import DialogCreateUser from "./dialog-create-user";
@@ -25,23 +25,36 @@ export default function UserManagement() {
     currentLimit,
     currentPage,
     currentSearch,
+    currentFilter,
     handleChangeLimit,
     handleChangePage,
     handleChangeSearch,
+    handleChangeFilter
   } = useDataTable();
   const {
     data: users,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["users", currentPage, currentLimit, currentSearch],
+    queryKey: ["users", currentPage, currentLimit, currentSearch, currentFilter],
     queryFn: async () => {
-      const result = await supabase
+      const query = supabase
         .from("profiles")
         .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
         .order("created_at")
-        .ilike("name", `%${currentSearch}%`);
+      
+      if(currentSearch){
+        query.or(
+          `name.ilike.%${currentSearch}%, role.ilike.%${currentSearch}%`,
+        )
+      }
+
+      if(currentFilter){
+        query.eq("role", currentFilter)
+      }
+
+      const result = await query;
 
       if (result.error) {
         toast.error("Get User data failed", {
@@ -134,6 +147,15 @@ export default function UserManagement() {
       <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="flex gap-2">
+          {FILTER_ROLE.map((item) => (
+            <Button
+              key={item.value}
+              onClick={() => handleChangeFilter(item.value)}
+              variant={currentFilter === item.value ? "default" : "outline"}
+            >
+              {item.label}
+            </Button>
+          ))}
           <Input
             placeholder="Search..."
             onChange={(e) => handleChangeSearch(e.target.value)}
