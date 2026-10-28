@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
-import { convertIDR } from "@/lib/utils";
+import { cn, convertIDR } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
@@ -225,7 +225,16 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardDescription>Growth Rate</CardDescription>
-            <CardTitle className="text-3xl font-bold">
+            <CardTitle
+              className={cn("text-3xl font-bold", {
+                "text-green-600 dark:text-green-400":
+                  Number(revenue?.growthRate) > 0,
+                "text-red-600 dark:text-red-400":
+                  Number(revenue?.growthRate) < 0,
+                "text-gray-500 dark:text-gray-400":
+                  Number(revenue?.growthRate) === 0,
+              })}
+            >
               {revenue?.growthRate ?? 0}%
             </CardTitle>
           </CardHeader>
