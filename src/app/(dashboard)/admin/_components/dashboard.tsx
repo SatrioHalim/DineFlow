@@ -236,7 +236,10 @@ export default function Dashboard() {
           </CardFooter>
         </Card>
       </div>
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="mt-4">
+        <InteractiveAreaChart data={revenueTrend}></InteractiveAreaChart>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-4 mt-4">
         <Card className="w-full lg:w-2/3">
           <CardHeader>
             <CardTitle>Order Create Per Week</CardTitle>
@@ -273,7 +276,8 @@ export default function Dashboard() {
                     <h3 className="font-semibold">{order.customer_name}</h3>
                     <p className="text-sm text-muted-foreground">
                       Table:{" "}
-                      {(order?.tables as unknown as { name: string })?.name ?? "Takeaway order"}
+                      {(order?.tables as unknown as { name: string })?.name ??
+                        "Takeaway order"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Order ID: {order?.order_id}
@@ -291,9 +295,6 @@ export default function Dashboard() {
             )}
           </div>
         </Card>
-      </div>
-      <div className="mt-4">
-        <InteractiveAreaChart data={revenueTrend}></InteractiveAreaChart>
       </div>
     </div>
   );

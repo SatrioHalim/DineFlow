@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
@@ -24,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { convertIDR } from "@/lib/utils";
+import { useMemo, useState } from "react";
 
 type RevenueData = {
   date: string;
@@ -48,9 +48,9 @@ export default function InteractiveAreaChart({
 }: {
   data: RevenueData[];
 }) {
-  const [timeRange, setTimeRange] = React.useState("7d");
+  const [timeRange, setTimeRange] = useState("7d");
 
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     const days = Number.parseInt(timeRange, 10);
     const latestDate = data.reduce(
       (latest, item) => (item.date > latest ? item.date : latest),
