@@ -89,7 +89,7 @@ export default function MenuManagement() {
         <div>
           <p>Base: {convertIDR(menu.price)}</p>
           <p>Discount: {menu.discount}%</p>
-          <p className="font-bold">
+          <p className="font-bold text-yellow-500 dark:text-yellow-200">
             After Discount:{" "}
             {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
           </p>
